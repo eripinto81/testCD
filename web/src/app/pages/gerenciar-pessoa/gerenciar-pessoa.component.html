@@ -1,0 +1,441 @@
+<div class="header py-5 py-lg-5" style="background-color: cornflowerblue;"></div>
+  
+<!-- <button type="button" class="btn btn-sm btn-primary col-md-2 mt-2" (click)="modalPorta(modalPortaConfig)">
+  <i class="fas fa-door-open"></i><span>CONFIGURAR PORTA</span>
+</button>
+<button type="button" class="btn btn-sm btn-danger col-md-2 mt-2" (click)="this.abrirPorta()">
+  <i class="fas fa-door-open"></i><span>ABRIR PORTA PRINCIPAL</span>
+</button>
+
+<ng-template #modalPortaConfig let-modal>
+  <div class="modal-header bg-success">
+    <h4 class="modal-title" id="modal-basic-title">Configuração da porta</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="form-group col-md-6">
+      <label for="ip_abrir"><b>IP da porta que vai abrir:</b></label>
+      <div class="input-group input-group-alternative mb-3">
+        <input id="ip_abrir" class="form-control" type="text" [formControl]="ip_abrir_porta">                    
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-sm btn-outline-dark" (click)="salvarConfigPorta()">Salvar</button>
+  </div>
+</ng-template> -->
+
+<div class="card card-accent-primary mb-5">
+  <div class="card-header">
+    <i class="icon-notebook"></i>
+    <strong>LISTA </strong>
+    <small>regisros</small>
+    <button type="button" class="text-left btn btn-danger btn-sm ml-2" (click)="novaEntrada(modalEntrada)">
+      <i class="fas fa-user-circle"></i><span>NOVA ENTRADA</span>
+    </button>
+    <button type="button" class="btn btn-sm btn-primary float-right" (click)="modalBuscaAvancada(buscaAvancada)">
+      <i class="fas fa-search"></i><span>Busca registro</span>
+    </button>
+    <button type="button" class="btn btn-sm btn-primary float-right mr-2" (click)="listarRegistro()">
+      <i class="fas fa-search"></i><span>Atualizar lista</span>
+    </button>
+  </div>
+
+  <div class="card-body card-body-insumo">
+    <table mat-table [dataSource]="_dataSource" multiTemplateDataRows class="table-mobile">
+      <ng-container matColumnDef="foto">
+        <th mat-header-cell *matHeaderCellDef> FOTO </th>
+        <td mat-cell *matCellDef="let usuario"> 
+          <img width="75" height="75" [src]="loadIMG(usuario.nome_arquivo)"/>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="nome">
+        <th mat-header-cell *matHeaderCellDef> VISITANTE </th>
+        <td mat-cell *matCellDef="let usuario"> <b>{{usuario.nome_pessoa }}</b> </td>
+      </ng-container>
+
+      <ng-container matColumnDef="setor">
+        <th mat-header-cell *matHeaderCellDef> SETOR </th>
+        <td mat-cell *matCellDef="let usuario"> <b>{{usuario.nome_setor }}</b> </td>
+      </ng-container>
+
+      <ng-container matColumnDef="entrada">
+        <th mat-header-cell *matHeaderCellDef> ENTRADA </th>
+        <td mat-cell *matCellDef="let usuario"> 
+          <label>
+            <b>{{ date_format(usuario.data_entrada) }}</b> 
+          </label>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="saida">
+        <th mat-header-cell *matHeaderCellDef> SAÍDA </th>
+        <td mat-cell *matCellDef="let usuario"> 
+          <div *ngIf="usuario.data_entrada != usuario.data_saida">
+            <b>{{ date_format(usuario.data_saida) }}</b>
+          </div>
+          <div *ngIf="usuario.data_entrada == usuario.data_saida">
+            <button type="button" class="btn btn-sm" (click)="marcarSaida(modalSaida, usuario.id_pessoa)">
+              MARCAR SAÍDA
+            </button>
+          </div>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="situacao">
+        <th mat-header-cell *matHeaderCellDef> SITUAÇÃO </th>
+        <td mat-cell *matCellDef="let usuario"> <b>{{ usuario.situacao }}</b> </td>
+      </ng-container>
+
+      <ng-container matColumnDef="bloquear">
+        <th mat-header-cell *matHeaderCellDef> AÇÃO </th>
+        <td mat-cell *matCellDef="let usuario"> 
+          <button type="button" class="btn btn-sm" (click)="bloquearPessoa(usuario.id_pessoa, usuario.situacao)">
+            <b class="text-danger" *ngIf="usuario.situacao == 'PERMITIDO'">BLOQUEAR</b> 
+            <b class="text-success" *ngIf="usuario.situacao == 'BLOQUEADO'">DESBLOQUEAR</b> 
+          </button>
+        </td>
+      </ng-container>
+                
+      <ng-container matColumnDef="expandedDetail">
+        <td mat-cell *matCellDef="let usuario" [attr.colspan]="_nome_coluna.length">
+          <div class="col-md-12 example-element-detail" [@detailExpand]="usuario == expandedElement ? 'expanded' : 'collapsed'">
+
+            <div class="row">
+              <div>
+                <table class="mt-2">
+                  <thead>
+                    <tr>
+                      <th style="padding-right: 50px;" scope="col">RG</th>
+                      <th style="padding-right: 50px;" scope="col">DATA NASCIMENTO</th>
+                      <th style="padding-right: 20px;" scope="col">CAPTURA</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    <tr>
+                      <td style="padding-right: 50px;" scope="row">{{ usuario.cpf_pessoa }}</td>
+                      <td style="padding-right: 50px;">{{ usuario.data_nascimento | date:'dd/MM/yyyy' }}</td>
+                      <td style="padding-right: 20px;">
+                        <button type="button" class="btn btn-sm btn-primary" (click)="modalAnexo(anexo, usuario.id_pessoa)">
+                          <i class="fa fa-user"></i><span>FOTO</span>
+                        </button>  
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+
+                <table class="col-md-12 mt-2">
+                  <thead>
+                    <tr>
+                      <th scope="col">OBSERVAÇÃO</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td style="padding-right: 20px;" scope="row"> {{ usuario.observacao }} </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+              
+          </div>
+        </td>
+      </ng-container>
+        
+      <tr mat-header-row *matHeaderRowDef="_nome_coluna"></tr>
+      <tr mat-row *matRowDef="let element; columns: _nome_coluna;" class="example-element-row"
+        [class.example-expanded-row]="expandedElement === element"
+        (click)="expandedElement = expandedElement === element ? null : element">
+      <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>
+    </table>
+    <mat-paginator [pageSizeOptions]="[25, 50, 100]" showFirstLastButtons></mat-paginator>
+  </div>
+</div>
+
+<ng-template #modalEntrada let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Registro de entrada</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    
+    <div class="header pb-8 pt-5 pt-md-6" style="background-color: lightgrey;">
+      <div class="container-fluid">
+        <div class="header-body">
+          <div class="text-center text-muted mb-4">
+            <small class="text-primary">Preencha as informações abaixo registrar a entrada de um visitante.</small>
+          </div>
+          <div class="text-center text-muted mb-4">
+            <small class="text-danger">Capture uma foto do rosto do visitante.</small>
+          </div>
+            
+          <div class="card snapshot">
+            <h3>
+              WEBCAM
+            </h3>
+            <div>
+              <webcam [height]="320" [width]="320" [trigger]="triggerObservable" (imageCapture)="handleImage($event)" *ngIf="showWebcam"
+                      [allowCameraSwitch]="allowCameraSwitch" [switchCamera]="nextWebcamObservable"
+                      [videoOptions]="videoOptions"
+                      [imageQuality]="1"
+                      (cameraSwitched)="cameraWasSwitched($event)"
+                      (initError)="handleInitError($event)">
+              </webcam>
+              
+              <div class="mt-2 mb-2">
+                <button class="btn btn-sm btn-warning" (click)="triggerSnapshot();">CAPTURAR</button>
+                <button class="btn btn-sm btn-primary" (click)="toggleWebcam();">Mostrar/Esconder Webcam</button>
+              </div>
+            </div>
+          </div>
+    
+          <div class="card snapshot form-group col-md-6 mt-4 mb-2" *ngIf="webcamImage">
+            <h3 class="text-dark">FOTO CAPTURADA</h3>
+            <img [src]="webcamImage.imageAsDataUrl"/>
+          </div>
+    
+          <div class="card snapshot form-group col-md-6 mt-4 mb-2" *ngIf="foto_capturada">
+            <h3 class="text-dark">FOTO SALVA</h3>
+            <img [src]="foto_capturada"/>
+          </div>
+          <br>
+
+          <div class="card card-accent-primary mb-4">
+            <form [formGroup]="registerForm" novalidate>
+              <div class="card-header">
+                <i class="icon-notebook"></i>
+                <strong>NOVO </strong>
+                <small>registro</small>
+              </div>
+              <div class="card-body">
+                <div class="row">
+                  <div class="form-group col-sm-6 mt-2">
+                    <label for="rg">RG <b class="text-danger">*</b></label>
+                    <input id="rg" mask="0000000-0" [showMaskTyped]="true" class="form-control" placeholder="CPF" type="text" formControlName="rg">
+                    <div *ngIf="registerForm.controls['rg'].invalid && (registerForm.controls['rg'].dirty || registerForm.controls['rg'].touched)" class="form-control alert alert-danger mt-2">
+                      É requerido!
+                    </div>
+                    <div class="form-control alert alert-success mt-2" *ngIf="registerForm.get('rg').status == 'VALID'">
+                      OK!
+                    </div>
+                  </div>
+
+                  <div class="form-group col-sm-6 mt-2">
+                    <label for="setor">Setor visita <b class="text-danger">*</b></label>
+                    <select id="setor" formControlName="setor" class="form-control" data-toggle="select" title="Lista de Unidades" data-live-search="true" data-live-search-placeholder="Search ...">
+                      <ng-container *ngFor="let setor of this.listar_setor">
+                        <option ngValue="{{setor.id}}">{{setor.nome_setor}}</option>
+                      </ng-container>
+                    </select>
+                    <div *ngIf="registerForm.controls['setor'].invalid && (registerForm.controls['setor'].dirty || registerForm.controls['setor'].touched)" class="form-control alert alert-danger mt-2">
+                      É requerido!
+                    </div>
+                    <div class="form-control alert alert-success mt-2" *ngIf="registerForm.get('setor').status == 'VALID'">
+                      OK!
+                    </div>
+                  </div>
+
+                  <div class="form-group col-sm-12 my-0">
+                    <label for="nome">Visitante <b class="text-danger">*</b></label>
+                    <input id="nome" class="form-control" placeholder="Nome do visitante..." type="text" formControlName="nome">
+                    <div *ngIf="registerForm.controls['nome'].invalid && (registerForm.controls['nome'].dirty || registerForm.controls['nome'].touched)" class="form-control alert alert-danger mt-2">
+                      É requerido!
+                    </div>
+                    <div class="form-control alert alert-success" *ngIf="registerForm.get('nome').status == 'VALID'">
+                      OK!
+                    </div>
+                  </div>
+
+                  <div class="form-group col-sm-6 mt-2">
+                    <label for="data_nascimento">Data nascimento <b class="text-danger">*</b></label>
+                    <input id="data_nascimento" class="form-control" type="date" formControlName="data_nascimento">                    
+                    <div *ngIf="registerForm.controls['data_nascimento'].invalid && (registerForm.controls['data_nascimento'].dirty || registerForm.controls['data_nascimento'].touched)" class="form-control alert alert-danger mt-2">
+                      É requerido!
+                    </div>
+                    <div class="form-control alert alert-success mt-2" *ngIf="registerForm.get('data_nascimento').status == 'VALID'">
+                      OK!
+                    </div>
+                  </div>
+
+                  <div class="form-group col-sm-6 mt-2">
+                    <label for="situacao">Situação <b class="text-danger">*</b></label>
+                    <select id="situacao" formControlName="fk_id_situacao" class="form-control" data-toggle="select" title="Lista de Situações" data-live-search="true" data-live-search-placeholder="Search ...">
+                      <ng-container *ngFor="let situacao of this.listar_situacao">
+                        <option [ngValue]="situacao.id" [selected]="situacao.id == 1" *ngIf="situacao.id == 1">{{situacao.nome_situacao}}</option>
+                      </ng-container>
+                    </select>
+                    <div *ngIf="registerForm.controls['fk_id_situacao'].invalid && (registerForm.controls['fk_id_situacao'].dirty || registerForm.controls['fk_id_situacao'].touched)" class="form-control alert alert-danger mt-2">
+                      É requerido!
+                    </div>
+                    <div class="form-control alert alert-success mt-2" *ngIf="registerForm.get('fk_id_situacao').status == 'VALID'">
+                      OK!
+                    </div>
+                  </div>
+
+                  <div class="form-group col-sm-12 mt-2">
+                    <label for="observacao">Informações sobre visita <b class="text-danger">*</b></label>
+                    <textarea id="observacao" class="form-control" id="obs" cols="30" rows="10" formControlName="observacao"></textarea>                  
+                    <div *ngIf="registerForm.controls['observacao'].invalid && (registerForm.controls['observacao'].dirty || registerForm.controls['observacao'].touched)" class="form-control alert alert-danger mt-2">
+                      É requerido!
+                    </div>
+                    <div class="form-control alert alert-success mt-2" *ngIf="registerForm.get('observacao').status == 'VALID'">
+                      OK!
+                    </div>
+                  </div>
+        
+                </div>
+              </div>
+
+              <div class="card-footer py-2">
+                <div class="col-sm-6 float-left">
+                  <button class="btn btn-sm btn-danger col-3 mb-2" (click)="limpar()">LIMPAR</button>
+                </div>
+                <div class="col-sm-6 float-right">
+                  <button class="btn btn-sm btn-primary col-4 mb-2 float-right" (click)="adicionarRegistro()" [disabled]="registerForm.status == 'INVALID'">REGISTRAR</button>
+                </div>
+              </div>
+
+            </form>
+          </div>
+
+          <!-- mostrar carregamento -->
+          <div class="text-center mt-4" *ngIf="loading1">
+            <img src="./assets/img/theme/waiting.gif" alt="loading...">
+            <h5>Carregando registros...</h5>
+          </div>
+
+          <div class="progress-info">
+            <div class="progress-label">
+              <span class="text-white bg-dark">Progresso</span>
+            </div>
+            <div class="progress-percentage">
+              <span class="text-white">{{progresso}}%</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>    
+
+  </div>
+</ng-template>
+
+<ng-template #anexo let-modal>
+  <div class="modal-header bg-success">
+    <h4 class="modal-title text-white" id="modal-basic-title">FOTO CAPTURA</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+
+    <table class="table table-mobile table-responsive" border="2" style="width: 100%;">
+      <thead>
+        <tr>
+          <th scope="col">Imagem</th>
+          <th scope="col">Download</th>
+        </tr>
+      </thead>
+      
+      <tbody *ngFor="let anexo of listar_anexo">
+        <tr *ngIf="anexo">
+          <td>
+            <img width="50" height="50" src="{{this.URL}}/files/{{anexo.nome_arquivo}}"/>
+          </td>
+          <td scope="row">
+            <a target="_blank" href="{{this.URL}}/files/{{anexo.nome_arquivo}}"> {{anexo.nome_arquivo}} </a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+        
+  </div>
+</ng-template>
+
+<ng-template #modalSaida let-modal>
+  <div class="modal-header bg-success">
+    <h4 class="modal-title" id="modal-basic-title">Marcar saída</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form [formGroup]="registerForm">
+      <div class="form-group col-md-6">
+        <label for="data_saida"><b>Data saída:</b></label>
+        <div class="input-group input-group-alternative mb-3">
+          <input id="data_saida" class="form-control" type="date" formControlName="data_saida">                    
+        </div>
+        <label for="horario_saida"><b>Horário saída:</b></label>
+        <input id="horario_saida" class="form-control" type="time" formControlName="horario_saida">
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-outline-dark" (click)="salvarSaida()">Registrar</button>
+  </div>
+</ng-template>
+
+<ng-template #buscaAvancada let-modal>
+  <div class="modal-header bg-success">
+    <h4 class="modal-title text-white" id="modal-basic-title">BUSCA REGISTRO</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    
+    <form [formGroup]="form_busca_avancada">
+      <div class="row">
+        <div class="form-group col-md-12">
+          <label><b>NOME:</b></label>
+          <div class="input-group input-group-alternative mb-3">
+            <div class="input-group-prepend">
+              <span class="input-group-text"><i class="fas fa-info-circle"></i></span>
+            </div>
+            <input formControlName="nome" class="form-control" placeholder="nome do visitante..." type="text">
+          </div>
+        </div>
+
+        <div class="form-group col-md-6">
+          <label for="rg"><b>RG:</b></label>
+          <div class="input-group input-group-alternative mb-3">
+            <input id="rg" class="form-control" placeholder="00000000" type="text" formControlName="rg">                    
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group col-md-6">
+          <label for="data_inicio"><b>Data Início:</b></label>
+            <div class="input-group input-group-alternative">
+              <div class="input-group-prepend">
+                <span class="input-group-text"><i class="ni ni-calendar-grid-58"></i></span>
+              </div>
+              <input id="data_inicio" class="form-control" type="date" formControlName="data_inicio">
+            </div>
+        </div>    
+
+        <div class="form-group col-md-6">
+          <label for="data_fim"><b>Data Final:</b></label>
+            <div class="input-group input-group-alternative">
+              <div class="input-group-prepend">
+                <span class="input-group-text"><i class="ni ni-calendar-grid-58"></i></span>
+              </div>
+              <input id="data_fim" class="form-control" type="date" formControlName="data_fim">
+            </div>
+        </div>  
+      </div>
+    </form>   
+      
+  </div>
+  <div class="modal-footer">
+    <button (click)="buscaAvancadaForm()" class="btn btn-sm btn-primary" (click)="modal.close()" [disabled]="form_busca_avancada.status == 'INVALID'"><i class="fas fa-search"></i> Buscar</button>
+  </div> 
+</ng-template>

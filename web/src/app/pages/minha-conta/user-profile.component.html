@@ -1,0 +1,162 @@
+<div class="header bg-gradient-success pb-8 pt-5 pt-md-8">
+  <div class="container-fluid">
+    <div class="row mt-4">
+
+    <div class="col-xl-4">
+      <div class="card card-profile shadow">
+        <div class="row justify-content-center">
+          <div class="col-lg-3 order-lg-2">
+            <div class="card-profile-image">
+              <a href="javascript:void(0)">
+                <img src="assets/img/theme/user.png" class="rounded-circle">
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="card-header">
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col">
+              <div class="card-profile-stats d-flex justify-content-center mt-md-5">
+                <div class="text-center">
+                  <h3>
+                    {{ this.user_profile_form.get('nome').value }}
+                  </h3>
+                  <div sclass="h5 font-weight-300">
+                    <i class="ni location_pin mr-2"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-xl-8 order-xl-1">
+      <div class="card bg-secondary shadow">
+        <div class="card-header bg-white border-0">
+          <div class="row align-items-center">
+            <div class="col-8">
+              <h3 class="mb-0">Minha conta</h3>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <form [formGroup]="user_profile_form" (ngSubmit)="onSubmit()">
+            <h6 class="heading-small text-muted mb-4">Informações do usuário</h6>
+            <div class="pl-lg-4">
+              <div class="row">
+                <div class="col-lg-12">
+                  <div class="form-group">
+                    <label class="form-control-label">Nome completo</label>
+                    <input type="text" class="form-control form-control-alternative" formControlName="nome">
+                  </div>
+                  <div class="form-control alert alert-danger mt-3" *ngIf="this.user_profile_form.get('nome').status == 'INVALID' ">
+                    O campo está vazio! Preencha.
+                  </div>
+                </div>        
+                <div class="col-lg-6">
+                  <div class="form-group">
+                    <label class="form-control-label">CPF: (000.000.000-00)</label>
+                    <input mask="000.000.000-00" [showMaskTyped]="true" type="text" formControlName="cpf" class="form-control form-control-alternative">
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-lg-6">
+                  <div class="form-group">
+                    <label class="form-control-label">E-mail:</label>
+                    <input type="email" formControlName="email" class="form-control form-control-alternative">
+                  </div>
+                </div> 
+              </div>
+            </div>
+            <hr class="my-4" />
+            <h6 class="heading-small text-muted mb-4">Telefone:</h6>
+            <div class="pl-lg-4">
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label class="form-control-label">Contato: (DDD) 99999-9999</label>
+                    <input mask="(00) 00000 - 0000" [showMaskTyped]="true" class="form-control form-control-alternative" type="text" formControlName="telefone">
+                  </div>
+                  <div class="form-control alert alert-danger mt-3" *ngIf="this.user_profile_form.get('telefone').status == 'INVALID' ">
+                    É requerido.
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <hr class="my-4" />
+
+            <div class="row" style="justify-content: center">
+              <button type="submit" class="btn btn-sm btn-primary col-md-4 mt-4">Salvar alterações</button>
+
+              <button type="button" class="btn btn-sm btn-warning col-md-4 mt-4" mat-raised-button (click)="openDialog(modalEditar)">
+                <i class="fa fa-pencil-alt"></i><span>Alterar senha</span>
+              </button>
+            </div>
+          </form>
+
+          <!-- Modal alterar senha -->
+          <ng-template #modalEditar let-modal>
+            <div class="modal-header">
+              <h4 class="modal-title" id="modal-basic-title">Alterar senha</h4>
+              <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <form [formGroup]="user_password_form">
+                <div class="form-group">
+                  <label for="senha_atual">Digite sua senha atual:</label>
+                  <div class="input-group">
+                    <input id="senha_atual" class="form-control" placeholder="Informe sua senha atual" type="password" formControlName="senha_atual">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="senha_nova">Nova senha:</label>
+                  <div class="input-group">
+                    <input id="senha_nova" class="form-control" placeholder="Informe a nova senha" type="password" formControlName="senha_nova">
+                  </div>
+                </div>
+                <div class="form-control alert alert-danger mt-3" *ngIf="this.user_password_form.get('senha_nova').touched && this.user_password_form.get('senha_nova').value == ''">
+                  Por favor! Informe sua nova senha.
+                </div>
+                <div class="form-control alert alert-danger mt-3" *ngIf="this.user_password_form.get('senha_nova').errors?.minlength">
+                  No mínimo 5 caracteres!
+                </div>
+                <div class="form-control alert alert-success mt-3" *ngIf="!this.user_password_form.get('senha_nova').errors?.minlength && !this.user_password_form.get('senha_nova').value == ''">
+                  OK!
+                </div>
+                <div class="form-group">
+                  <label for="senha_nova_confirmar">Confirme a nova senha:</label>
+                  <div class="input-group">
+                    <input id="senha_nova_confirmar" class="form-control" placeholder="Informe a confirmação da nova senha" type="password" formControlName="senha_confirmacao">
+                  </div>
+                </div>
+                <div class="form-control alert alert-danger mt-3" *ngIf="this.user_password_form.get('senha_confirmacao').touched && this.user_password_form.get('senha_confirmacao').value == ''">
+                  Por favor! Repita a sua nova senha.
+                </div>
+                <div class="form-control alert alert-danger mt-3" *ngIf="is_senha_validacao == false && !this.user_password_form.get('senha_confirmacao').value == ''">
+                  As senhas não são iguais!
+                </div>
+                <div class="form-control alert alert-success mt-3" *ngIf="is_senha_validacao == true">
+                  OK!
+                </div>
+              </form>
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-sm btn-success" [disabled]="this.user_password_form.status == 'INVALID'" (click)="mudarSenha()">Salvar</button>
+            </div>
+          </ng-template>
+          
+        </div>
+      </div>
+    </div>
+  
+    </div>
+  </div>
+</div>

@@ -1,0 +1,163 @@
+<div class="header pb-8 pt-5 pt-md-8" style="background-color: cornflowerblue;">
+  <div class="container-fluid">
+    <div class="header-body">
+
+      <div class="card card-accent-primary mb-5">
+        <div class="card-header">
+          <i class="icon-notebook"></i>
+          <strong>LISTA </strong>
+          <small>usuários</small>
+          <button type="button" class="btn btn-sm btn-primary float-right" (click)="buscaAvancada(modalBuscaAvancada)">
+            <i class="fas fa-search"></i><span>Busca usuário</span>
+          </button>
+          <button type="button" class="btn btn-sm btn-primary float-right mr-2" (click)="listarUsuarios()">
+            <i class="fas fa-search"></i><span>Listar todos</span>
+          </button>
+        </div>
+
+        <div class="card-body card-body-insumo">
+          <table mat-table [dataSource]="_dataSource" multiTemplateDataRows class="table-mobile">
+            <ng-container matColumnDef="nome">
+              <th mat-header-cell *matHeaderCellDef> <b>NOME</b> </th>
+              <td mat-cell *matCellDef="let usuario"> {{usuario.nome_usuario }} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="telefone">
+              <th mat-header-cell *matHeaderCellDef> <b>TELEFONE</b> </th>
+              <td mat-cell *matCellDef="let usuario"> {{ usuario.contato }} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="email">
+              <th mat-header-cell *matHeaderCellDef> <b> E-MAIL </b> </th>
+              <td mat-cell *matCellDef="let usuario"> {{ usuario.email }} </td>
+            </ng-container>
+                      
+            <ng-container matColumnDef="expandedDetail">
+              <td mat-cell *matCellDef="let usuario" [attr.colspan]="_nome_coluna.length">
+                <div class="example-element-detail" [@detailExpand]="usuario == expandedElement ? 'expanded' : 'collapsed'">
+                  
+                  <div class="row">
+                    <div class="col-md-12 mt-2">
+                      Matrícula: <b>{{ usuario.matricula }}</b>
+                    </div> 
+
+                    <div class="col-md-12 mt-2">
+                      CPF: <b>{{ usuario.cpf_usuario }}</b>
+                    </div>                        
+                  </div>  
+
+                </div>
+              </td>
+            </ng-container>
+              
+            <tr mat-header-row *matHeaderRowDef="_nome_coluna"></tr>
+            <tr mat-row *matRowDef="let element; columns: _nome_coluna;" class="example-element-row"
+              [class.example-expanded-row]="expandedElement === element"
+              (click)="expandedElement = expandedElement === element ? null : element">
+            <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>
+          </table>
+          <mat-paginator [pageSizeOptions]="[25, 50, 100]" showFirstLastButtons></mat-paginator>
+        </div>
+      </div>
+
+      <!-- Modal -->
+      <ng-template #modalAprovar let-modal>
+        <div class="modal-header">
+          <h4 class="modal-title" id="modal-basic-title">Aprovar usuário</h4>
+          <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+
+        <div class="modal-body">
+          <h2>Tem certeza que deseja aprovar o usuário?</h2>
+        </div>
+        
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary" (click)="aprovarUsuario()">Sim</button>
+          <button type="submit" class="btn btn-danger" (click)="modal.close()">Não</button>          
+        </div>
+      </ng-template>
+
+      <ng-template #modalBloquear let-modal>
+        <div class="modal-header">
+          <h4 class="modal-title" id="modal-basic-title">Bloquear usuário</h4>
+          <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+
+        <div class="modal-body">
+          <h1>Tem certeza que deseja bloquear o usuário?</h1>
+        </div>
+        
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary" (click)="bloquearUsuario()">Sim</button>
+          <button type="submit" class="btn btn-danger" (click)="modal.close()">Não</button>          
+        </div>
+      </ng-template>
+
+      <ng-template #modalPerfil let-modal>
+        <div class="modal-header">
+          <h4 class="modal-title" id="modal-basic-title">Definir perfil do usuário</h4>
+          <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+
+        <div class="modal-body">
+          <form [formGroup]="_form_perfil" (ngSubmit)="onSubmit()">
+            <div class="form-group col-md-12">
+              <label for="perfil">Selecione o perfil:</label>
+              <select id="perfil" class="form-control" formControlName="perfil_usuario">
+                <option *ngFor="let perfil of _lista_perfis" value="{{ perfil.id }}" >{{ perfil.perfil }}</option>
+              </select>
+            </div>
+          </form>
+        </div>
+        
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-sm btn-success" (click)="definirPerfilUsuario()">Definir</button>
+          <button type="submit" class="btn btn-sm btn-danger" (click)="modal.close()">Cancelar</button>          
+        </div>
+      </ng-template>
+
+      <ng-template #modalBuscaAvancada let-modal>
+        <div class="modal-header bg-success">
+          <h4 class="modal-title text-white" id="modal-basic-title">BUSCA USUÁRIO</h4>
+          <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form [formGroup]="_form_busca_avancada">
+            <div class="row">
+              <div class="form-group col-md-12">
+                <label>Nome:</label>
+                <div class="input-group input-group-alternative mb-3">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fas fa-info-circle"></i></span>
+                  </div>
+                  <input formControlName="nome" class="form-control" placeholder="nome do servidor..." type="text">
+                </div>
+              </div>
+
+              <div class="form-group col-md-6">
+                <label for="drt">Matrícula (9999999A):</label>
+                <div class="input-group input-group-alternative mb-3">
+                  <input id="drt" class="form-control" placeholder="" type="text" formControlName="matricula">                    
+                </div>
+              </div>
+            </div>
+          </form>   
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-sm btn-primary" (click)="buscaAvancadaForm()" [disabled]="_form_busca_avancada.status == 'INVALID'"><i class="fas fa-search"></i> Buscar</button>
+          <button class="btn btn-sm btn-danger" (click)="modal.close()">Cancelar</button>          
+        </div> 
+      </ng-template>
+
+    </div>
+  </div>
+</div>
+  

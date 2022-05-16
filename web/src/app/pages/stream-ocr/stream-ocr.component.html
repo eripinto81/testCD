@@ -1,0 +1,108 @@
+<div class="header py-7 py-lg-6" style="background-color: cornflowerblue;"></div>
+
+<div class="row">
+  <div class="col">
+    <div class="card bg-default shadow mt-4">
+      <div class="row">
+        <div class="text-center ml-4">
+          <button type="button" class="btn btn-danger btn-sm" (click)="novaCamera(modalConectarCamera)">
+            <i class="fas fa-camera"></i><span>CONECTAR CÂMERA</span>
+          </button>
+        </div>
+
+        <div class="text-center ml-4">
+          <button type="button" class="btn btn-secondary btn-sm" (click)="modalListaCamera(modalCamera)">
+            <i class="fas fa-camera"></i><span>LISTA CÂMERA</span>
+          </button>
+        </div>
+
+        <div class="text-center ml-4">
+          <button type="button" class="btn btn-secondary btn-sm" (click)="reconectarCamera()">
+            <i class="fa fa-sync"></i><span>RECONECTAR CÂMERA</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- mostrar cameras com reconhecimento facial -->
+<div class="row form-group">
+  <mat-card style="width: 620px;" class="frame ml-4 mt-4" *ngFor="let cam of camera">
+    <iframe *ngIf="cam" width="600" height="340" [src]="cam"></iframe>
+  </mat-card>
+</div>
+
+<ng-template #modalConectarCamera let-modal>
+  <div class="modal-header bg-success">
+    <h4 class="modal-title" id="modal-basic-title">Conectar câmera</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+
+    <div class="row">
+      <div class="form-group col-md-12">
+        <label><b>Usuário:</b></label>
+        <input [(ngModel)]="login" #ctrl="ngModel" placeholder="usuario" class="form-control col-md-6" required>
+      </div>
+
+      <div class="form-group col-md-12">
+        <label><b>Senha:</b></label>
+        <input [(ngModel)]="senha" #ctrl="ngModel" placeholder="senha" class="form-control col-md-6" required>
+      </div>
+
+      <div class="form-group col-md-12">
+        <label><b>Host:</b></label>
+        <input [(ngModel)]="host" #ctrl="ngModel" placeholder="host" class="form-control col-md-6" required>
+      </div>
+
+      <div class="form-group col-md-12">
+        <label><b>Porta:</b></label>
+        <input [(ngModel)]="porta" #ctrl="ngModel" placeholder="port" class="form-control col-md-6" required>
+      </div>
+    </div>
+
+    <div class="text-center">
+      <button (click)="conectarCamera()" class="btn btn-sm btn-primary col-md-3 mt-4">Conectar</button>
+    </div>
+
+  </div>
+</ng-template>
+
+<ng-template #modalCamera let-modal>
+  <div class="modal-header bg-success">
+    <h4 class="modal-title text-white" id="modal-basic-title">Câmeras</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    
+    <table class="table table-mobile" border="2" style="width: 100%;">
+      <thead>
+        <tr>
+          <th scope="col">Login</th>
+          <th scope="col">Senha</th>
+          <th scope="col">Host</th>
+          <th scope="col">Porta</th>
+          <th scope="col">Ação</th>
+        </tr>
+      </thead>
+      
+      <tbody *ngFor="let camera of lista_camera">
+        <tr *ngIf="camera">
+          <td>{{camera.login}}</td>
+          <td>{{camera.senha}}</td>
+          <td>{{camera.host}}</td>
+          <td>{{camera.porta}}</td>
+          <td>
+            <div class="btn btn-sm btn-outline-danger" (click)="deleteCamera(camera.id)"> Excluir </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+      
+  </div>
+</ng-template>

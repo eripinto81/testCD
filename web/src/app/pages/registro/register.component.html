@@ -1,0 +1,138 @@
+<div class="header py-lg-5" style="background-color: cornflowerblue;"></div>
+
+<div class="text-center text-muted mb-4">
+  <small class="text-blue">Registrar novo usuário no sistema</small>
+</div>
+
+<div class="card container">
+
+  <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+    <div class="form-row">
+      <div class="form-group col-md-6">
+        <label for="nome">Nome completo: *</label>
+        <div class="input-group input-group-alternative mb-3">
+          <div class="input-group-prepend">
+            <span class="input-group-text"><i class="ni ni-circle-08"></i></span>
+          </div>
+          <input id="nome" class="form-control" placeholder="Informe seu nome completo..." type="text" formControlName="nome">
+        </div>
+        <div *ngIf="registerForm.controls['nome'].invalid && (registerForm.controls['nome'].dirty || registerForm.controls['nome'].touched)" class="form-control alert alert-danger mt-2">
+          É requerido!
+        </div>
+        <div class="form-control alert alert-success" *ngIf="registerForm.get('nome').status == 'VALID'">
+          OK!
+        </div>
+      </div>
+
+      <div class="form-group col-md-6">
+        <label for="cpf">CPF: *</label>
+        <div class="input-group input-group-alternative mb-3">
+          <input id="cpf" mask="000.000.000-00" [showMaskTyped]="true" class="form-control" placeholder="Matrícula" type="text" formControlName="cpf">                    
+        </div>
+        <div *ngIf="registerForm.controls['cpf'].invalid && (registerForm.controls['cpf'].dirty || registerForm.controls['cpf'].touched)" class="form-control alert alert-danger mt-2">
+          É requerido!
+        </div>
+        <div class="form-control alert alert-success" *ngIf="registerForm.get('cpf').status == 'VALID' && validcpf">
+          OK!
+        </div>
+        <div class="form-control alert alert-danger" *ngIf="!validcpf">
+          CPF Inválido!
+        </div>
+      </div>
+
+      <div class="form-group col-md-6">
+        <label for="contato">Contato: (DDD) 99999-9999 *</label>
+        <div class="input-group input-group-alternative mb-3">
+          <div class="input-group-prepend">
+            <span class="input-group-text"><i class="ni ni-tablet-button"></i></span>
+          </div>
+          <input id="contato" mask="00-00000-0000" [showMaskTyped]="true" class="form-control" placeholder="Contato" type="text" formControlName="contato">
+        </div>
+        <div *ngIf="registerForm.controls['contato'].invalid && (registerForm.controls['contato'].dirty || registerForm.controls['contato'].touched)" class="form-control alert alert-danger mt-2">
+          É requerido!
+        </div>
+        <div class="form-control alert alert-success" *ngIf="registerForm.get('contato').status == 'VALID'">
+          OK!
+        </div>
+      </div>
+
+      <div class="form-group col-md-6">
+        <label for="drt">Matrícula (9999999A): *</label>
+        <div class="input-group input-group-alternative mb-3">
+          <input id="drt" class="form-control" placeholder="Matrícula" mask="0000000S" [showMaskTyped]="true" type="text" formControlName="matricula">                    
+        </div>
+        <div *ngIf="registerForm.controls['matricula'].invalid && (registerForm.controls['matricula'].dirty || registerForm.controls['matricula'].touched)" class="form-control alert alert-danger mt-2">
+          É requerido!
+        </div>
+        <div class="form-control alert alert-success" *ngIf="registerForm.get('matricula').status == 'VALID'">
+          OK!
+        </div>
+      </div>
+
+      <div class="form-group col-md-6">
+        <label for="unidade">Unidade: *</label>
+        <select id="unidade" formControlName="unidade" class="form-control" data-toggle="select" title="Lista de Unidade" data-live-search="true" data-live-search-placeholder="Search ...">
+          <ng-container *ngFor="let unidade of listar_unidade">
+            <option [ngValue]="unidade.id_unidade">{{unidade.nome_unidade}}</option>
+          </ng-container>
+        </select>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="form-group col-md-6">
+        <label for="email">E-mail: *</label>
+        <div class="input-group input-group-alternative mb-3">
+          <div class="input-group-prepend">
+            <span class="input-group-text"><i class="ni ni-email-83"></i></span>
+          </div>
+          <input id="email" class="form-control" placeholder="Email" type="email" formControlName="email">
+        </div>
+        <div class="form-control alert alert-danger" *ngIf="isEmailExist == true">
+          O e-mail já está associado a uma conta!
+        </div> 
+        <div class="form-control alert alert-success" *ngIf="registerForm.get('email').valid && isEmailExist == false">
+          OK!.
+        </div>
+        <div *ngIf="registerForm.controls['email'].invalid && (registerForm.controls['email'].dirty || registerForm.controls['email'].touched)" class="form-control alert alert-danger mt-2">
+          É requerido!
+        </div>
+      </div>
+
+      <div class="form-group col-md-6">
+        <label for="senha">Senha: *</label>
+        <div class="input-group input-group-alternative">
+          <div class="input-group-prepend">
+            <span class="input-group-text"><i class="ni ni-lock-circle-open"></i></span>
+          </div>
+          <input id="senha" class="form-control" placeholder="mínimo de 5 caracteres" type="password" minlength="5" formControlName="senha">
+        </div>
+        <div class="form-control alert alert-danger mt-3" *ngIf="registerForm.get('senha').touched && this.registerForm.get('senha').value == ''">
+          Por favor! Informe sua senha.
+        </div>
+        <div class="form-control alert alert-danger mt-3" *ngIf="registerForm.get('senha').errors?.minlength">
+          No mínimo 5 caracteres!
+        </div>
+        <div class="form-control alert alert-success mt-3" *ngIf="!registerForm.get('senha').errors?.minlength && !registerForm.get('senha').value == ''">
+          OK!.
+        </div>
+      </div>
+
+      <div class="row col-md-12">
+        <div class="col-12">
+          <div class="custom-control custom-control-alternative custom-checkbox">
+            <input class="custom-control-input" id="customCheckRegister" type="checkbox" formControlName="isCheckT">
+            <label class="custom-control-label" for="customCheckRegister">
+              <span class="text-muted">Eu aceito os termos de <a href="#!">Política de privacidade</a></span>
+            </label>
+          </div> 
+        </div>
+      </div>
+
+      <div class="col-md-12 text-center mb-2">
+        <button type="submit" class="btn btn-primary mt-4" [disabled]="registerForm.status == 'INVALID' || !validcpf || isEmailExist">Criar conta</button>
+      </div>
+    </div>
+  </form>
+
+</div>

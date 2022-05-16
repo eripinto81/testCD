@@ -1,0 +1,22 @@
+<div class="header pb-8 pt-5 pt-md-6" style="background-color: lightseagreen;">
+  <div class="container-fluid">
+    <div class="header-body">
+
+      <!-- <div>
+        <input [(ngModel)]="endereco" #ctrl="ngModel" placeholder="informe um local..." class="col-md-6" required>
+        <button (click)="findMap()" class="btn btn-sm btn-primary">Buscar</button>
+      </div> -->
+
+      <button (click)="tour(this.view)" class="btn btn-sm btn-secondary">Check-ins</button>
+
+      <div id="map" class="mt-4 map">
+        <div id="popup" class="ol-popup">
+          <a href="#" id="popup-closer" class="ol-popup-closer"></a>
+          <div id="popup-content"></div>
+        </div>
+      </div>
+      <div id="info"></div>
+
+    </div>
+  </div>
+</div>

@@ -1,0 +1,85 @@
+table {
+width: 100%;
+}
+
+table tr:hover td {
+background-color: #02c39a;
+color: white;
+font-weight: 500;
+}
+
+tr.example-detail-row {
+height: 0;
+}
+
+.example-element-row td {
+border-bottom-width: 0;
+}
+
+.example-element-detail {
+overflow: hidden;
+display: flex;
+}
+
+.btn {
+border-radius: 3px;
+}
+
+.card-body-insumo{
+padding: 0px;
+}
+
+.card-header{
+background-color: #2ec4b6;
+color: white;
+}
+
+.mat-column-ocorrencia {
+word-wrap: break-word !important;
+white-space: unset !important;
+flex: 0 0 70% !important;
+width: 70% !important;
+overflow-wrap: break-word;
+word-wrap: break-word;
+
+word-break: break-word;
+
+-ms-hyphens: auto;
+-moz-hyphens: auto;
+-webkit-hyphens: auto;
+hyphens: auto;
+
+padding-right: 40px !important;
+}
+
+.mat-column-data {
+word-wrap: break-word !important;
+white-space: unset !important;
+flex: 0 0 15% !important;
+width: 15% !important;
+overflow-wrap: break-word;
+word-wrap: break-word;
+
+word-break: break-word;
+
+-ms-hyphens: auto;
+-moz-hyphens: auto;
+-webkit-hyphens: auto;
+hyphens: auto;
+}
+
+.mat-column-acao {
+word-wrap: break-word !important;
+white-space: unset !important;
+flex: 0 0 15% !important;
+width: 15% !important;
+overflow-wrap: break-word;
+word-wrap: break-word;
+
+word-break: break-word;
+
+-ms-hyphens: auto;
+-moz-hyphens: auto;
+-webkit-hyphens: auto;
+hyphens: auto;
+}

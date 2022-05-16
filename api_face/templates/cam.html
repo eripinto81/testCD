@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Display Webcam Stream</title>
+ 
+<style>
+    #container {
+        margin: 0px auto;
+        width: 500px;
+        height: 375px;
+        border: 10px #333 solid;
+    }
+    #videoElement {
+        width: 500px;
+        height: 375px;
+        background-color: #666;
+    }
+</style>
+</head>
+<body>
+
+<button onclick="capture()">Capturar</button>
+
+<div id="container">
+	<video autoplay="true" id="videoElement"></video>
+</div>
+
+<div id="container">
+    <canvas id="canvas"></canvas>
+</div>
+
+<!-- <img id="imagem" width="300" height="300" /> -->
+
+<script>
+    let video= document.querySelector("#videoElement");
+    let imagem= document.getElementById('imagem');
+
+    if (navigator.mediaDevices.getUserMedia) {
+        navigator.mediaDevices.getUserMedia({ video: true })
+        .then(function (stream) {
+            video.srcObject= stream;
+        })
+        .catch(function (err0r) {
+            console.log("Something went wrong!");
+        })
+    }
+
+    function capture() {        
+        let canvas= document.getElementById('canvas');     
+        let video= document.getElementById('videoElement');
+        canvas.width= video.videoWidth;
+        canvas.height= video.videoHeight;
+        // canvas.getContext('2d').drawImage(video, 0, 0, video.videoWidth, video.videoHeight);
+        canvas.getContext('2d').drawImage(video, 0, 0, 500, 375);
+        imagem.setAttribute( 'src', canvas.toDataURL());
+    }
+
+    function stop(e) {
+        let stream= video.srcObject;
+        let tracks= stream.getTracks();
+
+        for (let i= 0; i < tracks.length; i++) {
+            let track= tracks[i];
+            track.stop();
+        }
+
+        video.srcObject= null;
+    }
+</script>
+
+</body>
+</html>

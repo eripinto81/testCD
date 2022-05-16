@@ -1,0 +1,25 @@
+sudo ng b --prod --aot=false --build-optimizer=false --lazyModules --optimization=true
+
+[user-database]
+sudo apt-get install mysql-server
+sudo mysql_secure_installation utility
+sudo mysql -u root -p
+
+CREATE USER 'ssp'@'localhost' IDENTIFIED BY '@SSP2019ra';
+GRANT ALL PRIVILEGES ON * . * TO 'ssp'@'localhost';
+FLUSH PRIVILEGES;
+
+create database monitoramento;
+use monitoramento;
+[copy/paste->monitoramento.sql]
+
+set session sql_mode= 'NO_ENGINE_SUBSTITUTION';
+set global sql_mode= 'NO_ENGINE_SUBSTITUTION';
+set lc_time_names= 'pt_BR';
+
+git clone https://github.com/Duivilly/portaria-ssp.git
+
+[API-pm2]
+sudo apt-get install npm
+sudo npm install pm2 -g
+sudo pm2 start portaria-ssp/api_web/server.js

@@ -1,0 +1,107 @@
+<div class="header py-5 py-lg-5" style="background-color: cornflowerblue;"></div>
+
+<div class="card card-accent-primary mb-3">
+  <div class="card-header">
+    <i class="icon-notebook"></i>
+    <strong>REGISTRO </strong>
+    <small>ocorrência</small>
+    <small class="float-right">Os campos que contém <strong class="text-danger">*</strong> são campos obrigatórios</small>
+  </div>
+  <div class="card-body">
+
+    <form [formGroup]="formOcorrencia" novalidate>
+      <div class="row">
+
+        <div class="form-group col-md-12">
+          <label for="descricao">Descreva a ocorrência <b class="text-danger">*</b></label>
+          <textarea id="descricao" class="form-control" rows="5" placeholder="Descreva o problema ocorrido..." formControlName="descricaoOcorrencia"></textarea>
+        </div>
+
+      </div>
+    </form>
+
+  </div>
+  <div class="card-footer py-2">
+    <button class="btn btn-sm btn-success float-right" [disabled]="formOcorrencia.status == 'INVALID'" *ngIf="!is_editar" (click)="criarOcorrencia()">
+      <i class="fas fa-check"></i> SALVAR
+    </button>
+    <button class="btn btn-sm btn-warning float-right" [disabled]="formOcorrencia.status == 'INVALID'" *ngIf="is_editar" (click)="atualizarOcorrencia()">
+      <i class="fas fa-check"></i> ATUALIZAR
+    </button>
+    <button class="btn btn-sm btn-danger" (click)="limpar()">
+      <i class="fas fa-broom"></i> LIMPAR
+    </button>
+  </div>
+</div>
+
+<div class="card card-accent-primary mb-5">
+  <div class="card-header">
+    <i class="icon-notebook"></i>
+    <strong>LISTA </strong>
+    <small>ocorrências</small>
+    <button class="btn btn-sm btn-secundary float-right" (click)="openModalBusca(modalBusca)">
+      <i class="fa fa-floppy-o"></i> BUSCAR
+    </button>
+    <button class="btn btn-sm btn-secundary float-right mr-2" (click)="listaOcorrencia()">
+      <i class="fa fa-floppy-o"></i> ATUALIZAR
+    </button>
+  </div>
+
+  <div class="card-body card-body-insumo">
+    <table mat-table [dataSource]="dataSource" multiTemplateDataRows>
+      <ng-container matColumnDef="ocorrencia">
+        <th mat-header-cell *matHeaderCellDef> <b>DESCRIÇÃO DA OCORRÊNCIA</b> </th>
+        <td mat-cell *matCellDef="let ocorrencia">  
+          <p style="text-align: justify;">{{ ocorrencia.descricao_ocorrencia }}</p>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="data">
+        <th mat-header-cell *matHeaderCellDef> <b>DATA</b> </th>
+        <td mat-cell *matCellDef="let ocorrencia"> {{ ocorrencia.data | date:'dd/MM/yyyy H:mm' }} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="acao">
+        <th mat-header-cell *matHeaderCellDef> <b>AÇÃO</b> </th>
+        <td mat-cell *matCellDef="let ocorrencia">
+          <button type="button" class="btn btn-sm btn-warning" (click)="editarOcorrencia(ocorrencia)">
+            <i class="fa fa-pencil-alt"></i><span>Editar</span>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="nomecoluna"></tr>
+      <tr mat-row *matRowDef="let row; columns: nomecoluna;"></tr>
+    </table>
+    <mat-paginator [pageSizeOptions]="[25, 50, 100]" showFirstLastButtons></mat-paginator>
+  </div>
+</div>
+
+<ng-template #modalBusca let-modal>
+  <div class="modal-header bg-success">
+    <h4 class="modal-title" id="modal-basic-title">BUSCA OCORRÊNCIA</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+
+    <form [formGroup]="formBuscaOcorrencia" novalidate>
+      <div class="row">
+        <div class="form-group col-sm-12 mt-2">
+          <label for="descricao">Descreva sua busca</label>
+          <textarea id="descricao" class="form-control" rows="3" placeholder="parte da descrição..." formControlName="descricaoOcorrencia"></textarea>
+        </div>
+
+        <div class="form-group col-sm-6 mt-2">
+          <label for="data">Data ocorrência</label>
+          <input id="data" class="form-control" type="date" formControlName="data">                    
+        </div>
+      </div>
+    </form>
+            
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-sm btn-outline-dark" (click)="buscarOcorrencia()">BUSCAR</button>
+  </div>
+</ng-template>

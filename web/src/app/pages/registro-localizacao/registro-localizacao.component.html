@@ -1,0 +1,96 @@
+<div class="header py-5 py-lg-5" style="background-color: cornflowerblue;"></div>
+
+<div class="card card-accent-primary mb-5">
+  <div class="card-header">
+    <i class="icon-notebook"></i>
+    <strong>LISTA </strong>
+    <small>regisros</small>
+    <button type="button" class="btn btn-sm btn-primary float-right" (click)="buscaAvancada(modalBusca)">
+      <i class="fas fa-search"></i><span>Busca registro</span>
+    </button>
+    <button type="button" class="btn btn-sm btn-primary float-right mr-2" (click)="listarLocalizacao()">
+      <i class="fas fa-search"></i><span>Atualizar lista</span>
+    </button>
+  </div>
+
+  <div class="card-body card-body-insumo">
+    <table mat-table [dataSource]="_dataSource" multiTemplateDataRows class="table-mobile">
+      <ng-container matColumnDef="nome">
+        <th mat-header-cell *matHeaderCellDef> NOME </th>
+        <td mat-cell *matCellDef="let usuario"> <b>{{usuario.nome_usuario}}</b> </td>
+      </ng-container>
+
+      <ng-container matColumnDef="lat">
+        <th mat-header-cell *matHeaderCellDef> LAT </th>
+        <td mat-cell *matCellDef="let usuario"> <b>{{usuario.lat}}</b> </td>
+      </ng-container>
+
+      <ng-container matColumnDef="lon">
+        <th mat-header-cell *matHeaderCellDef> LON </th>
+        <td mat-cell *matCellDef="let usuario"> <b>{{usuario.lon}}</b> </td>
+      </ng-container>
+
+      <ng-container matColumnDef="data">
+        <th mat-header-cell *matHeaderCellDef> DATA </th>
+        <td mat-cell *matCellDef="let usuario"> <b>{{usuario.data | date:'dd/MM/yyyy H:mm'}}</b> </td>
+      </ng-container>
+
+      <ng-container matColumnDef="mapa">
+        <th mat-header-cell *matHeaderCellDef> MAPA </th>
+        <td mat-cell *matCellDef="let usuario"> 
+          <button type="button" class="btn btn-sm" (click)="carregarMapa(usuario)">
+            <b class="text-primary fas fa-map"></b> 
+          </button>
+        </td>
+      </ng-container>
+                
+      <ng-container matColumnDef="expandedDetail">
+        <td mat-cell *matCellDef="let usuario" [attr.colspan]="_nome_coluna.length">
+          <div class="col-md-12 example-element-detail" [@detailExpand]="usuario == expandedElement ? 'expanded' : 'collapsed'">
+
+            <div class="row">
+          
+            </div>
+              
+          </div>
+        </td>
+      </ng-container>
+        
+      <tr mat-header-row *matHeaderRowDef="_nome_coluna"></tr>
+      <tr mat-row *matRowDef="let element; columns: _nome_coluna;" class="example-element-row"
+        [class.example-expanded-row]="expandedElement === element"
+        (click)="expandedElement = expandedElement === element ? null : element">
+      <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>
+    </table>
+    <mat-paginator [pageSizeOptions]="[25, 50, 100]" showFirstLastButtons></mat-paginator>
+  </div>
+</div>
+
+<ng-template #modalBusca let-modal>
+  <div class="modal-header bg-success">
+    <h4 class="modal-title" id="modal-basic-title">BUSCA REGISTRO</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+
+    <form [formGroup]="formBusca" novalidate>
+      <div class="row">
+        <div class="form-group col-sm-12 mt-2">
+          <label for="nome">Nome</label>
+          <input id="nome" type="text" class="form-control" placeholder="nome..." formControlName="nome"/>
+        </div>
+
+        <div class="form-group col-sm-6 mt-2">
+          <label for="data">Data</label>
+          <input id="data" class="form-control" type="date" formControlName="data">                    
+        </div>
+      </div>
+    </form>
+            
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-sm btn-outline-dark" (click)="buscarRegistroLocalizacao()">BUSCAR</button>
+  </div>
+</ng-template>
